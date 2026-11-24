@@ -3,6 +3,7 @@ package com.cafeteria.gui;
 import com.cafeteria.model.ReglasDescuento;
 import com.cafeteria.persistence.ConexionBD;
 import com.cafeteria.service.CalculadoraDescuento;
+import com.cafeteria.service.ValidadorMonto;
 
 import javax.swing.*;
 import java.awt.*;
@@ -26,6 +27,7 @@ public class VentanaPrincipal extends JFrame {
 
     public VentanaPrincipal() {
         super("Cafeteria - Calculadora de Descuentos");
+        moneda.setMaximumFractionDigits(0); // pesos colombianos: sin centavos
         construirInterfaz();
         probarConexionInicial();
     }
@@ -40,7 +42,7 @@ public class VentanaPrincipal extends JFrame {
         panel.setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
 
         JPanel panelEntrada = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        panelEntrada.add(new JLabel("Monto total del pedido ($):"));
+        panelEntrada.add(new JLabel("Monto total del pedido (COP):"));
         panelEntrada.add(campoMonto);
         panelEntrada.add(botonCalcular);
 
@@ -65,15 +67,11 @@ public class VentanaPrincipal extends JFrame {
 
     /** Obtiene el monto, aplica la logica lambda y muestra el resultado (evento del boton). */
     private void calcularDescuento() {
-        String texto = campoMonto.getText().trim().replace(",", ".");
-        double total;
+        long total;
         try {
-            total = Double.parseDouble(texto);
-            if (total < 0) {
-                throw new NumberFormatException("negativo");
-            }
-        } catch (NumberFormatException ex) {
-            areaResultado.append("Por favor ingresa un monto numerico valido (mayor o igual a 0).\n");
+            total = ValidadorMonto.convertir(campoMonto.getText());
+        } catch (IllegalArgumentException ex) {
+            areaResultado.append(ex.getMessage() + "\n");
             return;
         }
 
