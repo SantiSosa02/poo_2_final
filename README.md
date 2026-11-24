@@ -61,11 +61,22 @@ Al ejecutar `Main`, la aplicación intenta conectarse a `cafeteria.db` (se
 crea sola si no existe) y muestra el resultado de la conexión en el
 `JTextArea`. Al calcular un descuento, el pedido también se guarda ahí.
 
-## Regla de descuento
+## Reglas de descuento
 
-La regla por defecto (`ReglasDescuento.ESTANDAR`) es la que pide el
-enunciado: si el total es mayor a $10, aplica 15% de descuento; si no, 0%.
-Es una expresión lambda que implementa `ReglaDescuento`. Para agregar una
-regla nueva no hay que modificar `ReglaDescuento` ni `CalculadoraDescuento`
-(principio abierto/cerrado): basta con escribir otra lambda o clase en
-`ReglasDescuento`.
+Todos los montos están en **pesos colombianos (COP)**, sin centavos. El campo
+acepta `25000` o `25.000`, y rechaza formatos como `25.00` o `25,00`.
+
+En la ventana se elige la regla en una lista desplegable:
+
+| Regla | Descuento |
+|---|---|
+| Estándar (la del enunciado) | 15 % si el total es mayor a $10.000; si no, 0 % |
+| Cliente frecuente | 5 % en cualquier pedido |
+| Pedido grande | $2.000 fijos en pedidos de $20.000 o más |
+| Sin descuento | 0 % |
+
+Cada regla es una expresión lambda que implementa la interfaz funcional
+`ReglaDescuento` y está en `ReglasDescuento`. Para agregar una regla nueva
+basta con escribir otra lambda y registrarla en `ReglasDescuento.disponibles()`:
+aparece sola en la lista, sin modificar `ReglaDescuento`,
+`CalculadoraDescuento` ni la ventana (principio abierto/cerrado).

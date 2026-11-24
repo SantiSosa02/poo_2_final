@@ -3,8 +3,10 @@ package com.cafeteria;
 import com.cafeteria.model.*;
 import com.cafeteria.service.CalculadoraDescuento;
 
+import java.text.NumberFormat;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Demo de consola para la Unidad I: arma un pedido con distintos
@@ -19,13 +21,16 @@ public class DemoPedido {
 
     public static void main(String[] args) {
         List<Producto> pedido = Arrays.asList(
-                new Bebida("Cafe americano", 3.5, 2, Bebida.Tamano.MEDIANO),
-                new Bebida("Jugo de naranja", 4.0, 1, Bebida.Tamano.GRANDE),
-                new Comida("Sandwich de pollo", 6.5, 1, Comida.Categoria.PLATO_PRINCIPAL),
-                new Comida("Brownie", 2.5, 2, Comida.Categoria.POSTRE)
+                new Bebida("Cafe americano", 3_500, 2, Bebida.Tamano.MEDIANO),
+                new Bebida("Jugo de naranja", 4_000, 1, Bebida.Tamano.GRANDE),
+                new Comida("Sandwich de pollo", 6_500, 1, Comida.Categoria.PLATO_PRINCIPAL),
+                new Comida("Brownie", 2_500, 2, Comida.Categoria.POSTRE)
         );
 
-        System.out.println("=== Pedido ===");
+        NumberFormat moneda = NumberFormat.getCurrencyInstance(new Locale("es", "CO"));
+        moneda.setMaximumFractionDigits(0);
+
+        System.out.println("=== Pedido (precios en COP) ===");
         double total = 0;
         for (Producto p : pedido) {
             System.out.println(p); // usa describir() + calcularSubtotal() de forma polimorfica
@@ -36,8 +41,9 @@ public class DemoPedido {
         double descuento = calculadora.obtenerDescuento(total);
         double totalFinal = calculadora.obtenerTotalConDescuento(total);
 
-        System.out.printf("%nTotal: $%.2f%n", total);
-        System.out.printf("Descuento (regla estandar): $%.2f%n", descuento);
-        System.out.printf("Total a pagar: $%.2f%n", totalFinal);
+        System.out.println();
+        System.out.println("Total: " + moneda.format(total));
+        System.out.println("Descuento (regla estandar): " + moneda.format(descuento));
+        System.out.println("Total a pagar: " + moneda.format(totalFinal));
     }
 }

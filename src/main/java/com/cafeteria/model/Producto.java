@@ -42,6 +42,7 @@ public abstract class Producto {
 
     @Override
     public String toString() {
-        return describir() + String.format(" - $%.2f", calcularSubtotal());
+        // Pesos colombianos: separador de miles con punto y sin centavos (ej. $7.000)
+        return describir() + String.format(new java.util.Locale("es", "CO"), " - $%,.0f", calcularSubtotal());
     }
 }
